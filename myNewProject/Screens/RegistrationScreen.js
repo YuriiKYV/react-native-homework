@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from "react";
+import { AntDesign } from '@expo/vector-icons';
 import {
   ImageBackground,
   View, 
   Text, 
   StyleSheet, 
   TextInput, 
+  Image, 
   TouchableOpacity, 
   KeyboardAvoidingView, 
   Platform, 
@@ -17,19 +19,20 @@ import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 
 const initialState = {
+  login: '',
   email: '',
   password: '',
 }
 
-
-const Login = () => {
+const Registration = () => {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [isInputLogin, setIsInputLogin] = useState(false);
   const [isInputEmail, setIsInputEmail] = useState(false);
   const [isInputPassword, setIsInputPassword] = useState(false);
   const [showSecureText, setShowSecureText] = useState(true);
   const [fontsLoaded] = useFonts({
-    'Roboto-Regular': require("../../assets/fonts/Roboto-Regular.ttf"),
+    'Roboto-Regular': require("../assets/fonts/Roboto-Regular.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -40,7 +43,7 @@ const Login = () => {
 
   if (!fontsLoaded) {
     return null;
-  };
+  }
   
   const setInput = (el) => {
     setIsShowKeyboard(true)
@@ -73,13 +76,25 @@ const Login = () => {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
         style={styles.image}
-        source={require("../../public/images/photoBG.jpg")}
+        source={require("../public/images/photoBG.jpg")}
         onLayout={onLayoutRootView}>
-        
+      
         <KeyboardAvoidingView style={styles.registerContainer} behavior={Platform.OS == "ios" ? "padding" : "height"}  >
           <TouchableWithoutFeedback onPress={keyboardHide}>
             <View style={{ ...styles.form, paddingBottom: isShowKeyboard ? 32 : 43 }} >
-              <Text style={styles.title}>Войти</Text>
+              <View style={styles.avatarContainer}>
+                <Image style={styles.avatar} source={require("../public/images/noAvatar.jpg")} />
+                <TouchableOpacity style={styles.addAvatar}><AntDesign name="pluscircleo" size={24} color="#FF6C00" /></TouchableOpacity>
+              </View>
+              <Text style={styles.title}>Регистрация</Text>
+              <TextInput
+                style={{ ...styles.input, borderColor: isInputLogin ? "#FF6C00" : "#E8E8E8" }}
+                placeholder="Логин"
+                onFocus={() => setInput("login")}
+                onBlur={() => setIsInputLogin(false)}
+                onChangeText={(value) => setState((prevState) => ({ ...prevState, login: value }))}
+                value={state.login}
+              />
               <TextInput
                 style={{ ...styles.input, borderColor: isInputEmail ? "#FF6C00" : "#E8E8E8" }}
                 placeholder="Адрес электронной почты"
@@ -115,7 +130,7 @@ const Login = () => {
           >
             <Text style={styles.btnTitle}>Зарегистрироваться</Text>
           </TouchableOpacity>
-          <Text style={styles.linkRegister}>Нет аккаунта? Зарегистрироваться</Text>
+          <Text style={styles.linkLogin}>Уже есть аккаунт? Войти</Text>
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>
@@ -129,7 +144,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   registerContainer: {
-    paddingTop: 32,
     paddingRight: 16,
     paddingLeft: 16,
     
@@ -190,7 +204,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    paddingBottom: 144,
+    paddingBottom: 66,
   },
   btn: {
     width: "100%",
@@ -206,9 +220,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#FFFFFF",
   },
-  linkRegister: {
+  linkLogin: {
     fontFamily: 'Roboto-Regular',
   }
 });
 
-export default Login;
+export default Registration;
