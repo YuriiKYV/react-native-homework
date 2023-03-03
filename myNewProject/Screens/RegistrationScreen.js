@@ -76,14 +76,14 @@ const Registration = () => {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
         style={styles.image}
-        source={require("../public/images/photoBG.jpg")}
+        source={require("../assets/images/photoBG.jpg")}
         onLayout={onLayoutRootView}>
       
         <KeyboardAvoidingView style={styles.registerContainer} behavior={Platform.OS == "ios" ? "padding" : "height"}  >
           <TouchableWithoutFeedback onPress={keyboardHide}>
             <View style={{ ...styles.form, paddingBottom: isShowKeyboard ? 32 : 43 }} >
               <View style={styles.avatarContainer}>
-                <Image style={styles.avatar} source={require("../public/images/noAvatar.jpg")} />
+                <Image style={styles.avatar} source={require("../assets/images/noAvatar.jpg")} />
                 <TouchableOpacity style={styles.addAvatar}><AntDesign name="pluscircleo" size={24} color="#FF6C00" /></TouchableOpacity>
               </View>
               <Text style={styles.title}>Регистрация</Text>

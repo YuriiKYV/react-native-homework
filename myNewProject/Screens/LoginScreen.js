@@ -73,7 +73,7 @@ const Login = () => {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
         style={styles.image}
-        source={require("../public/images/photoBG.jpg")}
+        source={require("../assets/images/photoBG.jpg")}
         onLayout={onLayoutRootView}>
         
         <KeyboardAvoidingView style={styles.registerContainer} behavior={Platform.OS == "ios" ? "padding" : "height"}  >
