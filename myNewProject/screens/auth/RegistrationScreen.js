@@ -1,61 +1,44 @@
-import React, { useState, useCallback } from "react";
-import { AntDesign } from '@expo/vector-icons';
+import React, { useState } from "react";
+import { AntDesign } from "@expo/vector-icons";
 import {
   ImageBackground,
-  View, 
-  Text, 
-  StyleSheet, 
-  TextInput, 
-  Image, 
-  TouchableOpacity, 
-  KeyboardAvoidingView, 
-  Platform, 
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-
-SplashScreen.preventAutoHideAsync();
 
 const initialState = {
-  login: '',
-  email: '',
-  password: '',
-}
+  login: "",
+  email: "",
+  password: "",
+};
 
-const Registration = () => {
+const Registration = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [isInputLogin, setIsInputLogin] = useState(false);
   const [isInputEmail, setIsInputEmail] = useState(false);
   const [isInputPassword, setIsInputPassword] = useState(false);
   const [showSecureText, setShowSecureText] = useState(true);
-  const [fontsLoaded] = useFonts({
-    'Roboto-Regular': require("../assets/fonts/Roboto-Regular.ttf"),
-  });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-  
   const setInput = (el) => {
-    setIsShowKeyboard(true)
+    setIsShowKeyboard(true);
     switch (el) {
       case "login":
-        setIsInputLogin(true)
+        setIsInputLogin(true);
         break;
       case "email":
-        setIsInputEmail(true)
+        setIsInputEmail(true);
         break;
       case "password":
-        setIsInputPassword(true)
+        setIsInputPassword(true);
         break;
       default:
         break;
@@ -65,64 +48,98 @@ const Registration = () => {
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-  }
+  };
 
   const submitForm = () => {
     setState(initialState);
     console.log(state);
-  }
+    navigation.navigate("HomeScreen");
+  };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
         style={styles.image}
-        source={require("../assets/images/photoBG.jpg")}
-        onLayout={onLayoutRootView}>
-      
-        <KeyboardAvoidingView style={styles.registerContainer} behavior={Platform.OS == "ios" ? "padding" : "height"}  >
+        source={require("../../assets/images/photoBG.jpg")}
+      >
+        <KeyboardAvoidingView
+          style={styles.registerContainer}
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+        >
           <TouchableWithoutFeedback onPress={keyboardHide}>
-            <View style={{ ...styles.form, paddingBottom: isShowKeyboard ? 32 : 43 }} >
+            <View
+              style={{
+                ...styles.form,
+                paddingBottom: isShowKeyboard ? 32 : 43,
+              }}
+            >
               <View style={styles.avatarContainer}>
-                <Image style={styles.avatar} source={require("../assets/images/noAvatar.jpg")} />
-                <TouchableOpacity style={styles.addAvatar}><AntDesign name="pluscircleo" size={24} color="#FF6C00" /></TouchableOpacity>
+                <Image
+                  style={styles.avatar}
+                  source={require("../../assets/images/noAvatar.jpg")}
+                />
+                <TouchableOpacity style={styles.addAvatar}>
+                  <AntDesign name="pluscircleo" size={24} color="#FF6C00" />
+                </TouchableOpacity>
               </View>
               <Text style={styles.title}>Регистрация</Text>
               <TextInput
-                style={{ ...styles.input, borderColor: isInputLogin ? "#FF6C00" : "#E8E8E8" }}
+                style={{
+                  ...styles.input,
+                  borderColor: isInputLogin ? "#FF6C00" : "#E8E8E8",
+                }}
                 placeholder="Логин"
                 onFocus={() => setInput("login")}
                 onBlur={() => setIsInputLogin(false)}
-                onChangeText={(value) => setState((prevState) => ({ ...prevState, login: value }))}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, login: value }))
+                }
                 value={state.login}
               />
               <TextInput
-                style={{ ...styles.input, borderColor: isInputEmail ? "#FF6C00" : "#E8E8E8" }}
+                style={{
+                  ...styles.input,
+                  borderColor: isInputEmail ? "#FF6C00" : "#E8E8E8",
+                }}
                 placeholder="Адрес электронной почты"
                 onFocus={() => setInput("email")}
                 onBlur={() => setIsInputEmail(false)}
-                onChangeText={(value) => setState((prevState) => ({ ...prevState, email: value }))}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, email: value }))
+                }
                 value={state.email}
               />
               <View style={styles.inputPasswordContainer}>
                 <TextInput
-                  style={{ ...styles.input, borderColor: isInputPassword ? "#FF6C00" : "#E8E8E8" }}
+                  style={{
+                    ...styles.input,
+                    borderColor: isInputPassword ? "#FF6C00" : "#E8E8E8",
+                  }}
                   placeholder="Пароль"
                   secureTextEntry={showSecureText}
                   onFocus={() => setInput("password")}
                   onBlur={() => setIsInputPassword(false)}
-                  onChangeText={(value) => setState((prevState) => ({ ...prevState, password: value }))}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, password: value }))
+                  }
                   value={state.password}
                 />
-                <Text style={styles.textPassword}
-                  onPress={() => showSecureText ? setShowSecureText(false) : setShowSecureText(true)}>
-                  {showSecureText ? 'Показать' : `Скрыть`}
+                <Text
+                  style={styles.textPassword}
+                  onPress={() =>
+                    showSecureText
+                      ? setShowSecureText(false)
+                      : setShowSecureText(true)
+                  }
+                >
+                  {showSecureText ? "Показать" : `Скрыть`}
                 </Text>
               </View>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-      
-        <View style={styles.footerContainer} >
+
+        <View style={styles.footerContainer}>
           <TouchableOpacity
             style={styles.btn}
             activeOpacity={0.7}
@@ -130,7 +147,9 @@ const Registration = () => {
           >
             <Text style={styles.btnTitle}>Зарегистрироваться</Text>
           </TouchableOpacity>
-          <Text style={styles.linkLogin}>Уже есть аккаунт? Войти</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.linkLogin}>Уже есть аккаунт? Войти</Text>
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>
@@ -146,7 +165,7 @@ const styles = StyleSheet.create({
   registerContainer: {
     paddingRight: 16,
     paddingLeft: 16,
-    
+
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
@@ -156,13 +175,13 @@ const styles = StyleSheet.create({
     paddingBottom: 78,
   },
   title: {
-    fontFamily: 'Roboto-Regular',
+    fontFamily: "Roboto-Regular",
     color: "#212121",
     fontSize: 30,
     marginBottom: 32,
   },
   input: {
-    fontFamily: 'Roboto-Regular',
+    fontFamily: "Roboto-Regular",
     paddingHorizontal: 16,
     justifyContent: "center",
     width: "100%",
@@ -180,7 +199,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   textPassword: {
-    fontFamily: 'Roboto-Regular',
+    fontFamily: "Roboto-Regular",
     color: "#1B4371",
     fontSize: 16,
     position: "absolute",
@@ -216,13 +235,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   btnTitle: {
-    fontFamily: 'Roboto-Regular',
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     color: "#FFFFFF",
   },
   linkLogin: {
-    fontFamily: 'Roboto-Regular',
-  }
+    fontFamily: "Roboto-Regular",
+  },
 });
 
 export default Registration;
