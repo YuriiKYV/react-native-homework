@@ -20,6 +20,7 @@ const HomeScreen = ({ navigation }) => {
     >
       <MainTab.Screen
         options={{
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <View
               style={{

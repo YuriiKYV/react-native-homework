@@ -19,7 +19,8 @@ export default function App() {
   // const routing = useRoute(true);
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-ThinItalic": require("./assets/fonts/Roboto-ThinItalic.ttf"),
+    "Roboto-Black": require("./assets/fonts/Roboto-Black.ttf"),
+    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
   });
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
