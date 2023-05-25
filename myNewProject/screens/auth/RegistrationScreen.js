@@ -13,6 +13,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignUpUser } from "../../redux/auth/authOperations";
 
 const initialState = {
   login: "",
@@ -27,6 +29,8 @@ const Registration = ({ navigation }) => {
   const [isInputEmail, setIsInputEmail] = useState(false);
   const [isInputPassword, setIsInputPassword] = useState(false);
   const [showSecureText, setShowSecureText] = useState(true);
+
+  const dispatch = useDispatch();
 
   const setInput = (el) => {
     setIsShowKeyboard(true);
@@ -51,9 +55,8 @@ const Registration = ({ navigation }) => {
   };
 
   const submitForm = () => {
+    dispatch(authSignUpUser(state));
     setState(initialState);
-    console.log(state);
-    navigation.navigate("HomeScreen");
   };
 
   return (

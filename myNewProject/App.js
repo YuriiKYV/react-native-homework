@@ -1,22 +1,20 @@
-import React, { useCallback } from "react";
-import { StyleSheet, View } from "react-native";
-//Screens
-import Registration from "./screens/auth/RegistrationScreen";
-import Login from "./screens/auth/LoginScreen";
-import HomeScreen from "./screens/mainScreens/Home";
+import React, { useCallback, useState } from "react";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import db from "./firebase/config";
 
 //Fonts
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-//Navigation
 
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-
-const MainStack = createStackNavigator();
+import { useRoute } from "./router";
+import Main from "./components/Main";
 
 export default function App() {
-  // const routing = useRoute(true);
+  const [user, setUser] = useState(null);
+  db.auth().onAuthStateChanged((user) => setUser(user));
+
+  const routing = useRoute(user);
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Black": require("./assets/fonts/Roboto-Black.ttf"),
@@ -33,24 +31,8 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <MainStack.Navigator>
-        <MainStack.Screen
-          options={{ headerShown: false }}
-          name="Login"
-          component={Login}
-        />
-        <MainStack.Screen
-          options={{ headerShown: false }}
-          name="Registration"
-          component={Registration}
-        />
-        <MainStack.Screen
-          options={{ headerShown: false }}
-          name="HomeScreen"
-          component={HomeScreen}
-        />
-      </MainStack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <Main />
+    </Provider>
   );
 }

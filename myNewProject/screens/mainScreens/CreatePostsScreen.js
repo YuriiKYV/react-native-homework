@@ -10,6 +10,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { useSelector } from "react-redux";
+import db from "../../firebase/config";
 import { FontAwesome, AntDesign, SimpleLineIcons } from "@expo/vector-icons";
 import { Camera, CameraType } from "expo-camera";
 import * as Location from "expo-location";
@@ -28,6 +30,9 @@ const CreatePostsScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [state, setState] = useState(initialState);
   const [loadCamera, setLoadCamera] = useState(false);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const { userId, nickName } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async () => {
@@ -46,6 +51,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const keyboardHide = () => {
     Keyboard.dismiss();
+    setIsShowKeyboard(false);
   };
 
   const takePhoto = async () => {
@@ -66,14 +72,51 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const sendPost = () => {
+    uploadPostToServer();
     navigation.navigate("DefaultScreen", { state });
+
     setImage(null);
     setState(initialState);
   };
 
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(image);
+    const file = await response.blob();
+
+    const uniquePostId = Date.now().toString();
+
+    await db.storage().ref(`postImage/${uniquePostId}`).put(file);
+    const processedPhoto = await db
+      .storage()
+      .ref("postImage")
+      .child(uniquePostId)
+      .getDownloadURL();
+
+    return processedPhoto;
+  };
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
+    const { location, title, nameLocation } = state;
+    const createPost = await db.firestore().collection("posts").add({
+      photo,
+      title,
+      location: location.coords,
+      nameLocation,
+      userId,
+      nickName,
+    });
+  };
+
+  const setInput = () => {
+    setIsShowKeyboard(true);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container}>
+      <View
+        style={{ ...styles.container, marginTop: isShowKeyboard ? -60 : 0 }}
+      >
         <View style={styles.containerCamera}>
           {image ? (
             <View style={styles.containerPhoto}>
@@ -106,18 +149,24 @@ const CreatePostsScreen = ({ navigation }) => {
             ...styles.input,
             marginBottom: 16,
           }}
+          onFocus={() => setInput()}
           placeholder="Название"
           onChangeText={(value) =>
             setState((prevState) => ({ ...prevState, title: value }))
           }
           value={state.title}
         />
-        <View style={styles.containerInput}>
+        <View
+          style={{
+            ...styles.containerInput,
+          }}
+        >
           <TextInput
             style={{
               ...styles.input,
               paddingLeft: 28,
             }}
+            onFocus={() => setInput()}
             placeholder="Местность..."
             onChangeText={(value) =>
               setState((prevState) => ({ ...prevState, nameLocation: value }))
@@ -146,6 +195,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 32,
+    paddingBottom: 32,
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: "#FFFFFF",

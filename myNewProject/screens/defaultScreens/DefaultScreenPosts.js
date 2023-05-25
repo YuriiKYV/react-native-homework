@@ -7,16 +7,105 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { EvilIcons, SimpleLineIcons } from "@expo/vector-icons";
+import { SimpleLineIcons, FontAwesome, AntDesign } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import db from "../../firebase/config";
 
 const DefaultScreenPosts = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
+  const [isPosts, setIsPosts] = useState(false);
+  const [allComments, setAllComments] = useState([]);
+  const [allLikes, setAllLikes] = useState([]);
+  const { nickName } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params.state]);
-    }
-  }, [route.params]);
+    getAllPosts();
+  }, []);
+
+  useEffect(() => {
+    getAllComments();
+    getAllLikes();
+  }, [isPosts]);
+
+  const addLike = async (id) => {
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .collection("likes")
+      .add({ id, nickName });
+  };
+
+  const getAllLikes = async () => {
+    setAllLikes([]);
+    await posts.map(async (post) => {
+      await db
+        .firestore()
+        .collection("posts")
+        .doc(post.id)
+        .collection("likes")
+        .onSnapshot((data) =>
+          setAllLikes((prev) => [
+            ...prev,
+            { id: post.id, likes: data.docs.length },
+          ])
+        );
+    });
+  };
+
+  const getLikesPost = (id) => {
+    let count = 0;
+    allLikes.map((like) => {
+      if (like.id === id) {
+        return (count = like.likes);
+      }
+    });
+
+    return count;
+  };
+
+  const getAllPosts = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) => {
+        setPosts(
+          data.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }))
+        );
+        setIsPosts(true);
+      });
+  };
+
+  const getAllComments = async () => {
+    setAllComments([]);
+
+    await posts.map(async (post) => {
+      await db
+        .firestore()
+        .collection("posts")
+        .doc(post.id)
+        .collection("comments")
+        .onSnapshot((data) =>
+          setAllComments((prev) => [
+            ...prev,
+            { id: post.id, count: data.docs.length },
+          ])
+        );
+    });
+  };
+
+  const getCommentsPost = (id) => {
+    let count = 0;
+    allComments.map((comment) => {
+      if (comment.id === id) {
+        count = comment.count;
+      }
+    });
+    return count;
+  };
 
   return (
     <View style={styles.container}>
@@ -47,31 +136,55 @@ const DefaultScreenPosts = ({ route, navigation }) => {
                 style={{
                   ...styles.btnicon,
                   flexDirection: "row",
+                  alignItems: "center",
                 }}
                 onPress={() => navigation.navigate("CommentsScreen", { item })}
               >
-                <EvilIcons
-                  name="comment"
+                <FontAwesome
+                  name="comment-o"
                   size={24}
-                  style={styles.commentIcon}
+                  style={{
+                    ...styles.commentIcon,
+                  }}
+                  color="#BDBDBD"
                 />
-                <Text style={styles.commentCount}>0</Text>
+                <Text style={styles.commentCount}>
+                  {getCommentsPost(item.id)}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                useState={true}
+                style={{
+                  ...styles.btnicon,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                onPress={() => addLike(item.id)}
+              >
+                <AntDesign
+                  style={styles.likeIcon}
+                  name="like2"
+                  size={24}
+                  color="#BDBDBD"
+                />
+                <Text style={styles.commentCount}>
+                  {isPosts ? getLikesPost(item.id) : 0}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
                   ...styles.btnicon,
                   flexDirection: "row",
+                  alignItems: "center",
                 }}
                 onPress={() => navigation.navigate("MapScreen", { item })}
               >
                 <SimpleLineIcons
                   name="location-pin"
-                  size={20}
+                  size={24}
                   style={styles.locationtIcon}
                 />
-                <Text style={styles.location}>
-                  Ivano-Frankivs'k Region, Ukraine
-                </Text>
+                <Text style={styles.location}>{`${item.nameLocation}`}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -118,7 +231,7 @@ const styles = StyleSheet.create({
     lineHeight: 12,
   },
   imgPosts: {
-    width: "100%",
+    flex: 1,
     height: 200,
     marginBottom: 8,
     borderRadius: 8,
@@ -132,13 +245,22 @@ const styles = StyleSheet.create({
   descriptionPost: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   commentCount: {
-    color: "#BDBDBD",
+    color: "#212121",
+    fontFamily: "Roboto-Regular",
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 18,
   },
   commentIcon: {
-    color: "#BDBDBD",
-    marginRight: 6,
+    border: 1,
+    borderColor: "#BDBDBD",
+    marginRight: 10,
+  },
+  likeIcon: {
+    marginRight: 10,
   },
   locationtIcon: {
     color: "#BDBDBD",
@@ -148,6 +270,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
+    textDecorationLine: "underline",
   },
 });
 

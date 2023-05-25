@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   ImageBackground,
   View,
@@ -11,6 +11,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignInUser } from "../../redux/auth/authOperations";
 
 const initialState = {
   email: "",
@@ -23,6 +25,8 @@ const Login = ({ navigation }) => {
   const [isInputEmail, setIsInputEmail] = useState(false);
   const [isInputPassword, setIsInputPassword] = useState(false);
   const [showSecureText, setShowSecureText] = useState(true);
+
+  const dispatch = useDispatch();
 
   const setInput = (el) => {
     setIsShowKeyboard(true);
@@ -47,9 +51,8 @@ const Login = ({ navigation }) => {
   };
 
   const submitForm = () => {
+    dispatch(authSignInUser(state));
     setState(initialState);
-    console.log(state);
-    navigation.navigate("HomeScreen");
   };
 
   return (

@@ -1,14 +1,18 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import DefaultScreenPosts from "../defaultScreens/DefaultScreenPosts";
 import CommentsScreen from "../defaultScreens/CommentsScreen";
 import MapScreen from "../defaultScreens/MapScreen";
-import { AntDesign } from "@expo/vector-icons";
+import { authSignOutUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 
 const NestedScreen = createStackNavigator();
 
 const PostsScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   return (
     <NestedScreen.Navigator>
       <NestedScreen.Screen
@@ -17,6 +21,16 @@ const PostsScreen = ({ navigation }) => {
         options={{
           headerTitle: "Публикации",
           headerLeft: false,
+          headerRight: () => (
+            <TouchableOpacity style={styles.btnLogout}>
+              <MaterialIcons
+                name="logout"
+                size={24}
+                color="#BDBDBD"
+                onPress={() => dispatch(authSignOutUser())}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
       <NestedScreen.Screen
@@ -62,5 +76,8 @@ export default PostsScreen;
 const styles = StyleSheet.create({
   headerCreatePost: {
     paddingLeft: 20,
+  },
+  btnLogout: {
+    marginRight: 16,
   },
 });

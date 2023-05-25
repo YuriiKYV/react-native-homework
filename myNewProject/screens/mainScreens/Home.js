@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { AntDesign, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 //Nav
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 //ScrensBottom
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
@@ -72,6 +73,7 @@ const HomeScreen = ({ navigation }) => {
       />
       <MainTab.Screen
         options={{
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <View
               style={{
