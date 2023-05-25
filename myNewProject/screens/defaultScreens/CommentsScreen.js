@@ -51,7 +51,6 @@ const CommentsScreen = ({ route }) => {
       .collection("comments")
       .onSnapshot((data) => {
         setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(allComments);
       });
   };
 
