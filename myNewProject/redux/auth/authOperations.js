@@ -13,6 +13,7 @@ export const authSignUpUser =
         displayName: login,
       });
       const { displayName, uid } = await db.auth().currentUser;
+
       dispatch(
         updateUserProfile({
           userId: uid,
@@ -56,10 +57,12 @@ export const authSignOutUser = () => async (dispatch, getState) => {
 
 export const authStateCahngeUser = () => async (dispatch, getState) => {
   await db.auth().onAuthStateChanged((user) => {
+    console.log(user);
     if (user) {
       const userUpdateProfile = {
         nickName: user.displayName,
         userId: user.uid,
+        email: user.email,
       };
 
       dispatch(authStateChange({ stateChange: true }));

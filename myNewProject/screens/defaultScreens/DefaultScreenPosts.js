@@ -16,7 +16,7 @@ const DefaultScreenPosts = ({ route, navigation }) => {
   const [isPosts, setIsPosts] = useState(false);
   const [allComments, setAllComments] = useState([]);
   const [allLikes, setAllLikes] = useState([]);
-  const { nickName } = useSelector((state) => state.auth);
+  const { nickName, email } = useSelector((state) => state.auth);
 
   useEffect(() => {
     getAllPosts();
@@ -115,8 +115,8 @@ const DefaultScreenPosts = ({ route, navigation }) => {
           source={require("../../assets/images/noAvatar.jpg")}
         />
         <View>
-          <Text style={styles.userName}>Yurii Kukharuk</Text>
-          <Text style={styles.userEmail}>test@gmail.com</Text>
+          <Text style={styles.userName}>{nickName}</Text>
+          <Text style={styles.userEmail}>{email}</Text>
         </View>
       </View>
       <FlatList
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontFamily: "Roboto-Black",
-    fontWeight: 700,
+    fontWeight: "700",
     fontSize: 12,
     lineHeight: 14,
   },

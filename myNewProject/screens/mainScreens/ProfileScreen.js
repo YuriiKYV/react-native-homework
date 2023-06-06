@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontFamily: "Roboto-Black",
-    fontWeight: 700,
+    fontWeight: "700",
     fontSize: 12,
     lineHeight: 14,
   },

@@ -60,8 +60,10 @@ const CreatePostsScreen = ({ navigation }) => {
       console.log("Permission to access location was denied");
       return;
     }
-    setLoadCamera(true);
+
     const photo = await camera.takePictureAsync();
+    setLoadCamera(true);
+
     const location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
     });
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
   },
   cameraDescription: {
     fontFamily: "Roboto-Regular",
-    fontWeight: 400,
+    fontWeight: "400",
     fontSize: 16,
     lineHeight: 19,
     color: "#BDBDBD",
